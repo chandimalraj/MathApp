@@ -1,0 +1,271 @@
+/**
+ * Sample React Native App
+ * https://github.com/facebook/react-native
+ *
+ * @format
+ */
+
+import React, {useEffect, useState} from 'react';
+import type {PropsWithChildren} from 'react';
+import {
+  SafeAreaView,
+  ScrollView,
+  StatusBar,
+  StyleSheet,
+  Text,
+  useColorScheme,
+  View,
+} from 'react-native';
+
+import {
+  Colors,
+  DebugInstructions,
+  Header,
+  LearnMoreLinks,
+  ReloadInstructions,
+} from 'react-native/Libraries/NewAppScreen';
+import {
+  GAMBannerAd,
+  BannerAdSize,
+  TestIds,
+} from 'react-native-google-mobile-ads';
+
+type SectionProps = PropsWithChildren<{
+  title: string;
+}>;
+
+const adUnitId = __DEV__
+  ? TestIds.BANNER
+  : 'ca-app-pub-9262239337077945/7084873787';
+const add = 'ca-app-pub-9262239337077945/7084873787';
+// function Section({children, title}: SectionProps): JSX.Element {
+//   const isDarkMode = useColorScheme() === 'dark';
+
+//   // const [showBanner, setShowBanner] = useState(false);
+
+//   // useEffect(() => {
+//   //   admob()
+//   //     .setRequestConfiguration({
+//   //       maxAdContentRating: MaxAdContentRating.PG,
+//   //       tagForChildDirectedTreatment: false,
+//   //       tagForUnderAgeOfConsent: true,
+//   //     })
+//   //     .then(() => {
+//   //       setShowBanner(true);
+//   //     })},[]);
+
+//   return (
+//     // <View style={styles.sectionContainer}>
+//     //  <View></View>
+
+//     //   <Text
+//     //     style={[
+//     //       styles.sectionTitle,
+//     //       {
+//     //         color: isDarkMode ? Colors.white : Colors.black,
+//     //       },
+//     //     ]}>
+//     //     {title}
+//     //   </Text>
+//     //   <Text
+//     //     style={[
+//     //       styles.sectionDescription,
+//     //       {
+//     //         color: isDarkMode ? Colors.light : Colors.dark,
+//     //       },
+//     //     ]}>
+//     //     {children}
+//     //   </Text>
+//     // </View>
+//   );
+// }
+
+function App(): JSX.Element {
+  // const isDarkMode = useColorScheme() === 'dark';
+
+  // const backgroundStyle = {
+  //   backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
+  // };
+
+  return (
+    <View style={{alignItems: 'center'}}>
+      <GAMBannerAd
+        unitId={adUnitId}
+        sizes={[BannerAdSize.BANNER]}
+        requestOptions={{
+          requestNonPersonalizedAdsOnly: true,
+        }}
+      />
+      <GAMBannerAd
+        unitId={adUnitId}
+        sizes={[BannerAdSize.BANNER]}
+        requestOptions={{
+          requestNonPersonalizedAdsOnly: true,
+        }}
+      />
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  sectionContainer: {
+    marginTop: 32,
+    //paddingHorizontal: 24,
+  },
+  sectionTitle: {
+    fontSize: 24,
+    fontWeight: '600',
+  },
+  sectionDescription: {
+    marginTop: 8,
+    fontSize: 18,
+    fontWeight: '400',
+  },
+  highlight: {
+    fontWeight: '700',
+  },
+});
+
+export default App;
+
+
+{
+  "project_info": {
+    "project_number": "693342862774",
+    "project_id": "math-app-1a402",
+    "storage_bucket": "math-app-1a402.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:693342862774:android:05fc1698b1913b44565517",
+        "android_client_info": {
+          "package_name": "com.mathapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "693342862774-p7m0fn7k4m5lad9dbmgjcvf6lcf3ng68.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBlccBzGB3mAa7qrgUSC5a5YtfKE1OorRo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "693342862774-p7m0fn7k4m5lad9dbmgjcvf6lcf3ng68.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
+
+
+
+
+<View styles={styles.maincontainer}>
+      {/* <View style={styles.navbar}>
+        <Text style={styles.logo}>Logo</Text>
+        <View style={styles.buttonsContainer}>
+          <TouchableOpacity onPress={toggleMenu}>
+            <Image
+              source={
+                require('../../assets/icons/Menu.png')
+                //   uri: 'https://i.ibb.co/411mVGZ/math1.png',
+              }
+              style={{width: 40, height: 40}}
+            />
+          </TouchableOpacity>
+        </View>
+        <Animated.View style={[styles.menuContainer, {left: menuAnimation}]}>
+          <TouchableOpacity>
+            <Text style={styles.menuOption}>Option 1</Text>
+          </TouchableOpacity>
+          <TouchableOpacity>
+            <Text style={styles.menuOption}>Option 2</Text>
+          </TouchableOpacity>
+          <TouchableOpacity>
+            <Text style={styles.menuOption}>Option 3</Text>
+          </TouchableOpacity>
+        </Animated.View>
+      </View> */}
+
+      <ScrollView style={styles.container}>
+        <TouchableOpacity
+          style={styles.card}
+          onPress={() => {
+            navigation.navigate('ComMath');
+          }}>
+          <Image
+            source={
+              require('../../assets/icons/Bookmark.png')
+              //   uri: 'https://i.ibb.co/411mVGZ/math1.png',
+            }
+            style={{width: 50, height: 50}}
+          />
+          <Text style={styles.item}>සoයුක්ත ගණිතය සිද්ධාන්ත</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.card}>
+          <Image
+            source={
+              require('../../assets/icons/Accounting.png')
+              //   uri: 'https://i.ibb.co/411mVGZ/math1.png',
+            }
+            style={{width: 50, height: 50}}
+          />
+          <Text style={styles.item}>පසුගිය විභාග ප්‍රශ්නපත්‍ර සහ පිලිතුරු</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.card}>
+          <Image
+            source={
+              require('../../assets/icons/Test.png')
+              //   uri: 'https://i.ibb.co/411mVGZ/math1.png',
+            }
+            style={{width: 50, height: 50}}
+          />
+          <Text style={styles.item}>දිනපතා පෙරහුරු ගැටලු</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.card}>
+          <Image
+            source={
+              require('../../assets/icons/Training.png')
+              //   uri: 'https://i.ibb.co/411mVGZ/math1.png',
+            }
+            style={{width: 50, height: 50}}
+          />
+          <Text style={styles.item}>උපකාරක පන්ති</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.card}>
+          <Image
+            source={
+              require('../../assets/icons/FAQ.png')
+              //   uri: 'https://i.ibb.co/411mVGZ/math1.png',
+            }
+            style={{width: 50, height: 50}}
+          />
+          <Text style={styles.item}>විසදූ ගැටලු</Text>
+        </TouchableOpacity>
+      </ScrollView>
+
+      <View style={styles.banner}>
+        <GAMBannerAd
+          unitId={adUnitId}
+          sizes={[BannerAdSize.FULL_BANNER]}
+          requestOptions={{
+            requestNonPersonalizedAdsOnly: true,
+          }}
+        />
+        <Text>asdsad</Text>
+      </View>
+    </View>

@@ -1,0 +1,32 @@
+ "expo-modules-core": "^1.2.3",
+ "expo-constants": "^14.2.1",
+
+ {x.map((item) => {
+          return (
+            <View style={styles.sec} key={item}>
+              <Text style={styles.sech1}>අනුමාර්තුකාව</Text>
+              {/* <Text style={styles.sech2}>වැදගත් කරුණු </Text> */}
+              {/* <Text style={styles.sech3}>
+                {content}
+              </Text> */}
+              <Image
+                source={{
+                  //require('../../../../assets/images/1.png')
+                  uri: 'https://i.ibb.co/9g6XQ8S/Capture.png',
+                }}
+                style={{width : '100%' ,  aspectRatio: 16 / 9}}
+              />
+            </View>
+          );
+        })}
+
+
+        //height:200,
+            //   shadowColor: '#1877f2',
+            //   shadowOffset: {
+            //     width: 0,
+            //     height: 12,
+            //   },
+            //   shadowOpacity: 0.58,
+            //   shadowRadius: 16.0,
+            //   elevation: 24,
