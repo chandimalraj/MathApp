@@ -25,6 +25,23 @@ import PaperClass from './android/app/src/components/PaperClass/PaperClass';
 import Discussion from './android/app/src/components/Discussion/Discussion';
 import AlPastpapers from './android/app/src/components/PastPapers/AL/AlPastpapers';
 import Years from './android/app/src/components/PastPapers/AL/Years';
+import AlPaper from './android/app/src/components/PastPapers/Paper/AlPaper';
+import PaperView from './android/app/src/components/PastPapers/PaperView/PaperView';
+// import RNFetchBlob from 'react-native-fetch-blob';
+// import { Platform } from 'react-native';
+
+// // Configure trust management for Android and iOS
+// if (Platform.OS === 'android') {
+//   RNFetchBlob.config({
+//     trusty: true
+//   });
+// } else if (Platform.OS === 'ios') {
+//   RNFetchBlob.config({
+//     fileCache: true,
+//     appendExt: 'png',
+//     trusty: true
+//   });
+// }
 
 
 const Stack = createNativeStackNavigator();
@@ -135,7 +152,17 @@ const App = () => {
           options={{headerShown: false}}
         />
 
-        
+        <Stack.Screen
+          name="AlPaper"
+          component={AlPaper}
+          options={{headerShown: false}}
+        />
+        <Stack.Screen
+          name="PaperView"
+          component={PaperView}
+          options={{headerShown: false}}
+        />
+
       </Stack.Navigator>
     </NavigationContainer>
   );

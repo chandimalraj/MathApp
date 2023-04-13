@@ -71,7 +71,7 @@ const Syllabus = ({navigation}) => {
             {syllabus.map(section => (
               <TouchableOpacity key={section} style={styles.card}
               onPress={()=>{
-               // navigation.navigate('Syllabus',{year:section})
+                navigation.navigate('AlPaper',{syllabus:section , subject:subject , year:year})
               }}
               >
                 <Image
