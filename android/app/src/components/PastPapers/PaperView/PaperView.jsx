@@ -4,12 +4,7 @@ import {
   View,
   Dimensions,
   ActivityIndicator,
-  ScrollView,
-  Image,
-  TouchableOpacity,
   Button,
-  Platform,
-  Share,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {useRoute} from '@react-navigation/native';
@@ -28,9 +23,6 @@ const PaperView = () => {
   const [loaded, setLoaded] = useState(false);
   const [paper, setPaper] = useState({});
   
-
-  
-
   useEffect(() => {
     LoadPaper();
   }, []);

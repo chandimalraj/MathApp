@@ -109,13 +109,7 @@ const Years = ({navigation}) => {
           </ScrollView>
         )}
 
-        {/* <TouchableOpacity style={styles.card}>
-          <Image
-            source={require('../../assets/icons/Document.png')}
-            style={{width: 30, height: 30}}
-          />
-          <Text style={styles.item}>2010 Pure Mathematics</Text>
-        </TouchableOpacity> */}
+        
       </ScrollView>
       <View style={styles.banner}>
         <GAMBannerAd

@@ -27,6 +27,7 @@ import AlPastpapers from './android/app/src/components/PastPapers/AL/AlPastpaper
 import Years from './android/app/src/components/PastPapers/AL/Years';
 import AlPaper from './android/app/src/components/PastPapers/Paper/AlPaper';
 import PaperView from './android/app/src/components/PastPapers/PaperView/PaperView';
+import LoginRegister from './android/app/src/components/LoginRegister/LoginReg';
 // import RNFetchBlob from 'react-native-fetch-blob';
 // import { Platform } from 'react-native';
 
@@ -43,13 +44,9 @@ import PaperView from './android/app/src/components/PastPapers/PaperView/PaperVi
 //   });
 // }
 
-
 const Stack = createNativeStackNavigator();
 
 const App = () => {
-
-
-  
   return (
     //<Login></Login>
     //<Register></Register>
@@ -65,7 +62,7 @@ const App = () => {
           component={Home}
           options={{headerShown: false}}
         />
-       <Stack.Screen
+        <Stack.Screen
           name="ComMath"
           component={ComMath}
           options={{headerShown: false}}
@@ -85,7 +82,7 @@ const App = () => {
           component={Register}
           options={{title: 'Register'}}
         />
-        
+
         <Stack.Screen
           name="AppliedMaths"
           component={AppliedLessons}
@@ -140,7 +137,7 @@ const App = () => {
           options={{headerShown: false}}
         />
 
-         <Stack.Screen
+        <Stack.Screen
           name="ALpastpapers"
           component={AlPastpapers}
           options={{headerShown: false}}
@@ -163,11 +160,14 @@ const App = () => {
           options={{headerShown: false}}
         />
 
+        <Stack.Screen
+          name="LoginRegister"
+          component={LoginRegister}
+          options={{headerShown: false}}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
 };
-
-
 
 export default App;

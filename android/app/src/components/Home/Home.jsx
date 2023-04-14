@@ -13,11 +13,12 @@ import {
   GAMBannerAd,
   BannerAdSize,
   TestIds,
-  InterstitialAd,
-  AdEventType,
 } from 'react-native-google-mobile-ads';
 import Sidebar from './Sidebar/Sidebar';
 import storage from '@react-native-firebase/storage';
+import {GoogleSignin} from '@react-native-google-signin/google-signin';
+import auth from '@react-native-firebase/auth';
+// import Carousel from './Carousel/Carousel';
 
 const adUnitId = __DEV__
   ? TestIds.BANNER
@@ -26,10 +27,9 @@ const adUnitId = __DEV__
 const {height, width} = Dimensions.get('window');
 
 const Home = ({navigation}) => {
-
   const flatListRef = useRef(null);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [imges,setImgs] = useState([])
+  const [imges, setImgs] = useState([]);
   const scrollX = useRef(new Animated.Value(0)).current;
   const timerRef = useRef(null);
 
@@ -39,13 +39,23 @@ const Home = ({navigation}) => {
   const [activeIndex, setActiveIndex] = useState(0);
   const scrollViewRef = useRef(null);
 
-  useEffect(
+  const [user, setUser] = useState({
+    username: 'user',
+    imgUrl: 'https://i.ibb.co/M9TV5b4/User.png',
+  });
+  const [isSignedIn, setIsSignedIn] = useState(false);
+  const [first,setFirst] = useState(false)
 
-    () => {
-      if(imges.length==0){
-        LoadImages()
-      }
-    
+  useEffect(() => {
+    if (!first) {
+      findUser();
+      setFirst(true)
+    }
+
+    if (imges.length == 0) {
+      LoadImages();
+    }
+
     const intervalId = setInterval(() => {
       const newIndex = (activeIndex + 1) % imges.length;
       scrollViewRef.current.scrollTo({
@@ -55,18 +65,19 @@ const Home = ({navigation}) => {
     }, 6000);
     return () => clearInterval(intervalId);
   }, [activeIndex, imges.length]);
- 
- const LoadImages = async () => {
-   
-   const reference = storage().ref(`images/`);
-   const list = await reference.listAll();
-   const imageUrls = await Promise.all(list.items.map(async (itemRef) => {
-       const url = await itemRef.getDownloadURL();
-       return { uri: url };
-     }));
-  setImgs(imageUrls)
-  console.log('in async awiat')
-    }
+
+  const LoadImages = async () => {
+    const reference = storage().ref(`images/`);
+    const list = await reference.listAll();
+    const imageUrls = await Promise.all(
+      list.items.map(async itemRef => {
+        const url = await itemRef.getDownloadURL();
+        return {uri: url};
+      }),
+    );
+    setImgs(imageUrls);
+    console.log('in async awiat');
+  };
 
   const scrollToIndex = index => {
     flatListRef.current.scrollToIndex({index, animated: true});
@@ -95,12 +106,49 @@ const Home = ({navigation}) => {
   };
 
   const toggleMenu = () => {
+    if(!isSignedIn){
+      findUser()
+    }
+    
     setIsMenuOpen(!isMenuOpen);
     Animated.timing(menuAnimation, {
       toValue: isMenuOpen ? -250 : 0,
       duration: 500,
       useNativeDriver: false,
     }).start();
+  };
+
+  const findUser = async () => {
+
+    try {
+      const isSignedIn = await GoogleSignin.isSignedIn();
+      console.log(isSignedIn);
+      if (isSignedIn) {
+        setIsSignedIn(true);
+        const userInfo = await GoogleSignin.signInSilently();
+        setUser({username: userInfo.user.name, imgUrl: userInfo.user.photo});
+        console.log(userInfo);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const logOutUser = async () => {
+    try {
+      if (isSignedIn) {
+        await GoogleSignin.revokeAccess();
+        await GoogleSignin.signOut();
+        await auth().signOut();
+        setIsSignedIn(false)
+        setUser({
+          username:"user",
+          imgUrl:'https://i.ibb.co/M9TV5b4/User.png'
+        })
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -142,6 +190,8 @@ const Home = ({navigation}) => {
         </ScrollView>
       </View>
 
+      {/* <Carousel/> */}
+
       <ScrollView
         style={styles.container}
         contentContainerStyle={{alignItems: 'center'}}
@@ -158,27 +208,13 @@ const Home = ({navigation}) => {
           <Text style={styles.item}>සoයුක්ත ගණිතය</Text>
         </TouchableOpacity>
 
-        {/* <TouchableOpacity
-          style={styles.card}
-          onPress={() => {
-            navigation.navigate('ComMath');
-          }}>
-          <Image
-            source={require('../../assets/icons/Bookmark.png')}
-            style={{width: 50, height: 50}}
-          />
-          <Text style={styles.item}>O/L විශයන්</Text>
-        </TouchableOpacity> */}
-
         <TouchableOpacity
           style={styles.card}
           onPress={() => {
             navigation.navigate('ALpastpapers');
           }}>
           <Image
-            source={
-              require('../../assets/icons/Accounting.png')
-            }
+            source={require('../../assets/icons/Accounting.png')}
             style={{width: 50, height: 50}}
           />
           <Text style={styles.item}> A/L පසුගිය විභාග ප්‍රශ්නපත්‍ර</Text>
@@ -190,26 +226,11 @@ const Home = ({navigation}) => {
             navigation.navigate('PastPapers');
           }}>
           <Image
-            source={
-              require('../../assets/icons/Accounting.png')
-             
-            }
+            source={require('../../assets/icons/Accounting.png')}
             style={{width: 50, height: 50}}
           />
           <Text style={styles.item}> O/L පසුගිය විභාග ප්‍රශ්නපත්‍ර</Text>
         </TouchableOpacity>
-
-        {/* <TouchableOpacity style={styles.card}>
-          <Image
-            source={
-              require('../../assets/icons/Test.png')
-              
-            }
-            style={{width: 50, height: 50}}
-          />
-          <Text style={styles.item}>දිනපතා පෙරහුරු ගැටලු</Text>
-        </TouchableOpacity> */}
-
 
         <TouchableOpacity
           style={styles.card}
@@ -217,10 +238,7 @@ const Home = ({navigation}) => {
             navigation.navigate('PaperClass');
           }}>
           <Image
-            source={
-              require('../../assets/icons/Document.png')
-             
-            }
+            source={require('../../assets/icons/Document.png')}
             style={{width: 50, height: 50}}
           />
           <Text style={styles.item}>ප්‍රශ්නපත්‍ර පන්තිය</Text>
@@ -228,10 +246,7 @@ const Home = ({navigation}) => {
 
         <TouchableOpacity style={styles.card}>
           <Image
-            source={
-              require('../../assets/icons/Trophy.png')
-             
-            }
+            source={require('../../assets/icons/Trophy.png')}
             style={{width: 50, height: 50}}
           />
           <Text style={styles.item}>ලකුණු පුවරුව</Text>
@@ -243,16 +258,11 @@ const Home = ({navigation}) => {
             navigation.navigate('Tution');
           }}>
           <Image
-            source={
-              require('../../assets/icons/Training.png')
-             
-            }
+            source={require('../../assets/icons/Training.png')}
             style={{width: 50, height: 50}}
           />
           <Text style={styles.item}>උපකාරක පන්ති</Text>
         </TouchableOpacity>
-
-        
 
         {/* <TouchableOpacity
           style={styles.card}
@@ -271,21 +281,15 @@ const Home = ({navigation}) => {
 
         <TouchableOpacity style={styles.card}>
           <Image
-            source={
-              require('../../assets/icons/Zoom.png')
-              
-            }
+            source={require('../../assets/icons/Zoom.png')}
             style={{width: 50, height: 50}}
           />
           <Text style={styles.item}>අපගේ සහය ලබාගැනීමට</Text>
-
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.card}>
           <Image
-            source={
-              require('../../assets/icons/Cap.png')
-            }
+            source={require('../../assets/icons/Cap.png')}
             style={{width: 50, height: 50}}
           />
           <Text style={styles.item}>උසස් අධ්‍යාපනය</Text>
@@ -293,9 +297,7 @@ const Home = ({navigation}) => {
 
         <TouchableOpacity style={styles.card}>
           <Image
-            source={
-              require('../../assets/icons/Speaker.png')
-            }
+            source={require('../../assets/icons/Speaker.png')}
             style={{width: 50, height: 50}}
           />
           <Text style={styles.item}>නවතම තොරතුරු</Text>
@@ -303,14 +305,11 @@ const Home = ({navigation}) => {
 
         <TouchableOpacity style={styles.card}>
           <Image
-            source={
-              require('../../assets/icons/Classroom.png')
-            }
+            source={require('../../assets/icons/Classroom.png')}
             style={{width: 50, height: 50}}
           />
           <Text style={styles.item}>නව පාඨමාලා</Text>
         </TouchableOpacity>
-
       </ScrollView>
 
       <View style={styles.banner}>
@@ -320,7 +319,6 @@ const Home = ({navigation}) => {
           requestOptions={{
             requestNonPersonalizedAdsOnly: true,
           }}
-        
         />
       </View>
       {isMenuOpen == true && (
@@ -331,25 +329,23 @@ const Home = ({navigation}) => {
           }}></TouchableOpacity>
       )}
 
-      
       <Animated.View style={[styles.menuContainer, {left: menuAnimation}]}>
         <View style={styles.sidebarHeaderContainer}>
           <Image
             source={
-              require('../../assets/icons/User.png')
-              
+              // require('../../assets/icons/User.png')
+              {
+                uri: user.imgUrl,
+              }
             }
             style={{width: 80, height: 80}}
           />
-          <Text style={styles.sidebarHeader}>User</Text>
+          <Text style={styles.sidebarHeader}>{user.username}</Text>
         </View>
 
         <TouchableOpacity style={styles.sidebarItemContainer}>
           <Image
-            source={
-              require('../../assets/icons/Gear.png')
-             
-            }
+            source={require('../../assets/icons/Gear.png')}
             style={{width: 30, height: 30}}
           />
           <Text style={styles.sidebarItem}>Settings</Text>
@@ -357,10 +353,7 @@ const Home = ({navigation}) => {
 
         <TouchableOpacity style={styles.sidebarItemContainer}>
           <Image
-            source={
-              require('../../assets/icons/Share.png')
-              
-            }
+            source={require('../../assets/icons/Share.png')}
             style={{width: 30, height: 30}}
           />
           <Text style={styles.sidebarItem}>Share App</Text>
@@ -368,10 +361,7 @@ const Home = ({navigation}) => {
 
         <TouchableOpacity style={styles.sidebarItemContainer}>
           <Image
-            source={
-              require('../../assets/icons/Comments.png')
-             
-            }
+            source={require('../../assets/icons/Comments.png')}
             style={{width: 30, height: 30}}
           />
           <Text style={styles.sidebarItem}>Feedback</Text>
@@ -379,10 +369,7 @@ const Home = ({navigation}) => {
 
         <TouchableOpacity style={styles.sidebarItemContainer}>
           <Image
-            source={
-              require('../../assets/icons/Popular.png')
-              
-            }
+            source={require('../../assets/icons/Popular.png')}
             style={{width: 30, height: 30}}
           />
           <Text style={styles.sidebarItem}>Rate App</Text>
@@ -390,17 +377,36 @@ const Home = ({navigation}) => {
 
         <TouchableOpacity style={styles.sidebarItemContainer}>
           <Image
-            source={
-              require('../../assets/icons/Plane.png')
-              
-            }
+            source={require('../../assets/icons/Plane.png')}
             style={{width: 30, height: 30}}
           />
           <Text style={styles.sidebarItem}>Conatct Us</Text>
         </TouchableOpacity>
+
+        {isSignedIn==true && (<TouchableOpacity
+          style={styles.sidebarItemContainer}
+          onPress={logOutUser}>
+          <Image
+            source={require('../../assets/icons/Left.png')}
+            style={{width: 30, height: 30}}
+          />
+          <Text style={styles.sidebarItem}>Log Out</Text>
+        </TouchableOpacity>)}
+
+        {isSignedIn==false && (<TouchableOpacity
+          style={styles.sidebarItemContainer}
+          onPress={()=>{
+            navigation.navigate('LoginRegister')
+          }}>
+          <Image
+            source={require('../../assets/icons/Right.png')}
+            style={{width: 30, height: 30}}
+          />
+          <Text style={styles.sidebarItem}>Log In</Text>
+        </TouchableOpacity>)}
+
+
       </Animated.View>
-
-
     </View>
   );
 };
@@ -412,7 +418,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingBottom: 60,
     alignItems: 'center',
-    backgroundColor:'#fff'
+    backgroundColor: '#fff',
   },
   content: {
     flex: 1,
@@ -462,7 +468,7 @@ const styles = StyleSheet.create({
   container: {
     width: width,
     paddingBottom: 60,
-    backgroundColor:'#fff'
+    backgroundColor: '#fff',
   },
   card: {
     flexDirection: 'row',
@@ -495,8 +501,7 @@ const styles = StyleSheet.create({
   item: {
     marginLeft: 20,
     fontWeight: 800,
-    color:'#818185'
-    
+    color: '#818185',
   },
   banner: {
     position: 'absolute',

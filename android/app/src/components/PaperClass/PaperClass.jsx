@@ -7,7 +7,7 @@ import {
   Image,
   Dimensions,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   GAMBannerAd,
   BannerAdSize,
@@ -16,6 +16,7 @@ import {
   AdEventType,
 } from 'react-native-google-mobile-ads';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
+import auth from '@react-native-firebase/auth';
 
 const adUnitId = __DEV__
   ? TestIds.BANNER
@@ -27,6 +28,27 @@ const PaperClass = ({navigation}) => {
   const [sessionTime, setSessionTime] = useState(0);
   const [timerId, setTimerId] = useState(null);
   const [user, setUser] = useState('chandimalprabth1@gmail.com');
+
+  useEffect(() => {
+    findUser()
+  }, []);
+
+  const findUser = async () => {
+    
+    try {
+      const isSignedIn = await GoogleSignin.isSignedIn();
+      console.log(isSignedIn)
+      if (isSignedIn) {
+        const userInfo = await GoogleSignin.signInSilently();
+        console.log(userInfo);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const currentUser = auth().currentUser;
+  //const { displayName, photoURL, email } = currentUser;
 
   const startSession = () => {
     const id = setInterval(() => {
@@ -48,18 +70,29 @@ const PaperClass = ({navigation}) => {
   async function onGoogleButtonPress() {
     // Check if your device supports Google Play
 
+    //console.log(displayName)
+
     try {
-      await GoogleSignin.hasPlayServices({showPlayServicesUpdateDialog: true});
-      // Get the users ID token
-      const {idToken} = await GoogleSignin.signIn();
+      const isSignedIn = await GoogleSignin.isSignedIn();
+      if(!isSignedIn){
 
-      // Create a Google credential with the token
-      const googleCredential = auth.GoogleAuthProvider.credential(idToken);
-      console.log(googleCredential);
-      console.log(auth().signInWithCredential(googleCredential));
+        await GoogleSignin.hasPlayServices({showPlayServicesUpdateDialog: true});
+        // Get the users ID token
+        const {idToken} = await GoogleSignin.signIn();
+  
+        // Create a Google credential with the token
+        const googleCredential = auth.GoogleAuthProvider.credential(idToken);
+        console.log(googleCredential);
+        //console.log(auth().signInWithCredential(googleCredential));
+  
+        // Sign-in the user with the credential
+        await auth().signInWithCredential(googleCredential);
 
-      // Sign-in the user with the credential
-      return auth().signInWithCredential(googleCredential);
+      }
+     
+      //   await GoogleSignin.revokeAccess();
+      // await GoogleSignin.signOut();
+      // await auth().signOut();
     } catch (error) {
       console.log(error);
     }
@@ -99,11 +132,7 @@ const PaperClass = ({navigation}) => {
 
         <TouchableOpacity
           style={styles.card}
-          onPress={() =>
-            onGoogleButtonPress().then(() =>
-              console.log('Signed in with Google!'),
-            )
-          }>
+          onPress={() => onGoogleButtonPress()}>
           <Image
             source={require('../../assets/icons/Google.png')}
             style={{width: 50, height: 50}}
@@ -156,15 +185,12 @@ const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
     paddingTop: 20,
-    //backgroundColor: '#fcfcfa',
     flex: 1,
   },
   scroll: {
     width: '100%',
     flexDirection: 'column',
-    //backgroundColor: '#fcfcfa',
-    //paddingTop: 20,
-    //paddingBottom:200
+    
   },
 
   card: {
@@ -182,7 +208,6 @@ const styles = StyleSheet.create({
     width: width * 0.9,
   },
   item: {
-
     marginLeft: 20,
     fontWeight: 800,
     //color:''

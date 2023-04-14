@@ -1,5 +1,8 @@
 import { StyleSheet, Text, View,Dimensions ,Animated, Image ,TouchableOpacity } from 'react-native'
 import React ,{useState}from 'react'
+import {GoogleSignin} from '@react-native-google-signin/google-signin';
+import auth from '@react-native-firebase/auth';
+
 
 
 const {height, width} = Dimensions.get('window');
@@ -7,6 +10,27 @@ const {height, width} = Dimensions.get('window');
 const Sidebar = () => {
 
   const [menuAnimation] = useState(new Animated.Value(-250));
+
+  const [user , setUser] = useState("user")
+
+  useEffect(() => {
+    findUser()
+  }, []);
+
+  const findUser = async () => {
+    
+    try {
+      const isSignedIn = await GoogleSignin.isSignedIn();
+      console.log(isSignedIn)
+      if (isSignedIn) {
+        const userInfo = await GoogleSignin.signInSilently();
+        setUser(userInfo.user.name)
+        console.log(userInfo);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <Animated.View style={[styles.menuContainer, {left: menuAnimation}]}>
@@ -18,7 +42,7 @@ const Sidebar = () => {
         }
         style={{width: 80, height: 80}}
       />
-      <Text style={styles.sidebarHeader}>User</Text>
+      <Text style={styles.sidebarHeader}>{user}</Text>
     </View>
 
     <TouchableOpacity style={styles.sidebarItemContainer}>
