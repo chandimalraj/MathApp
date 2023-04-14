@@ -10,7 +10,6 @@ import {
   Button,
   Platform,
   Share,
-  
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {useRoute} from '@react-navigation/native';
@@ -25,37 +24,37 @@ const {height, width} = Dimensions.get('window');
 
 const PaperView = () => {
   const route = useRoute();
-  //const {subjectPart, subject, year, syllabus} = route.params;
-  const [loaded, setLoaded] = useState(true);
+  const {subjectPart, subject, year, syllabus} = route.params;
+  const [loaded, setLoaded] = useState(false);
+  const [paper, setPaper] = useState({});
+  
 
-  // useEffect(() => {
+  
 
-  //     LoadImages(section);
-  //  },[]);
+  useEffect(() => {
+    LoadPaper();
+  }, []);
 
-  //  const LoadImages = async (section) => {
-  //    let reference;
+  const LoadPaper = async () => {
+    let reference;
 
-  //    if(path=='pure'){
-  //         reference = storage().ref(`Pure Mathematics/${lesson}/${section}`);
-  //    }
-  //    else{
-  //         reference = storage().ref(`Applied Mathematics/${lesson}/${section}`);
-  //    }
+    reference = storage().ref(`Past Papers/${subject}/${year}/${syllabus}/${subjectPart}`);
 
-  //    const list = await reference.listAll();
+    const list = await reference.listAll();
 
-  //    const imageUrls = await Promise.all(list.items.map(async (itemRef) => {
-  //        const url = await itemRef.getDownloadURL();
-  //        return { name: itemRef.name, url };
-  //      }));
-
-  //    console.log(imageUrls)
-  //    setImgs(imageUrls)
-  //    setLoaded(true)
-  //    return imageUrls;
-
-  //  };
+    const imageUrls = await Promise.all(
+      list.items.map(async itemRef => {
+        const url = await itemRef.getDownloadURL();
+        return {name: itemRef.name, url};
+      }),
+    );
+     
+    setPaper(imageUrls[0])
+    console.log(imageUrls[0].name);
+    
+    setLoaded(true);
+    return imageUrls;
+  };
 
   const fileUrl = 'http://samples.leanpub.com/thereactnativebook-sample.pdf';
 
@@ -77,11 +76,7 @@ const PaperView = () => {
     } catch (error) {
       console.error(error);
     }
-
-    
-    };
-   
-
+  };
 
   const download = () => {
     const {config, fs} = RNFetchBlob;
@@ -93,21 +88,19 @@ const PaperView = () => {
       addAndroidDownloads: {
         useDownloadManager: true,
         notification: true,
-        title: "fileName",
+        title: 'Paper is downloading',
         description: 'File downloaded by download manager.',
         mime: 'application/pdf',
+        path: `${RNFetchBlob.fs.dirs.DownloadDir}/${paper.name}`,
       },
     };
-   
 
     config(options)
-      .fetch('GET', fileUrl)
+      .fetch('GET', paper.url)
       .then(res => {
         console.log(JSON.stringify(res));
-
       });
-    
-    }
+  };
 
   return (
     <View style={styles.container}>
@@ -119,7 +112,7 @@ const PaperView = () => {
       {loaded == true && (
         <Pdf
           source={{
-            uri: 'http://samples.leanpub.com/thereactnativebook-sample.pdf',
+            uri: paper.url,
             cache: true,
           }}
           style={{flex: 1, width: width, height: height}}
@@ -140,14 +133,7 @@ const PaperView = () => {
       )}
 
       <View style={styles.banner}>
-        {/* <GAMBannerAd
-          unitId={adUnitId}
-          sizes={[BannerAdSize.BANNER]}
-          requestOptions={{
-            requestNonPersonalizedAdsOnly: true,
-          }}
-        /> */}
-        <Button title="download" onPress={downloadPDF} />
+        <Button title="download" onPress={downloadPDF} color="#42b72a" />
       </View>
     </View>
   );
@@ -164,6 +150,7 @@ const styles = StyleSheet.create({
 
     // paddingBottom: 50,
     backgroundColor: '#fcfcfa',
+    paddingBottom: 60,
   },
   scroll: {
     width: '100%',
