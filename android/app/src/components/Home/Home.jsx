@@ -333,12 +333,11 @@ const Home = ({navigation}) => {
         <View style={styles.sidebarHeaderContainer}>
           <Image
             source={
-              // require('../../assets/icons/User.png')
               {
                 uri: user.imgUrl,
               }
             }
-            style={{width: 80, height: 80}}
+            style={{width: 80, height: 80,borderRadius:40}}
           />
           <Text style={styles.sidebarHeader}>{user.username}</Text>
         </View>

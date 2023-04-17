@@ -1,55 +1,64 @@
-import {StyleSheet, Text, View, ScrollView, Button, Image ,Dimensions,ActivityIndicator} from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  ScrollView,
+  Button,
+  Image,
+  Dimensions,
+  ActivityIndicator,
+} from 'react-native';
 import {useRoute} from '@react-navigation/native';
-import React, {useEffect,useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import storage from '@react-native-firebase/storage';
 import {database, firebase} from '@react-native-firebase/database';
 import {
-    GAMBannerAd,
-    BannerAdSize,
-    TestIds,
-    InterstitialAd,
-    AdEventType,
-    
-  } from 'react-native-google-mobile-ads';
+  GAMBannerAd,
+  BannerAdSize,
+  TestIds,
+  InterstitialAd,
+  AdEventType,
+} from 'react-native-google-mobile-ads';
 
 const {height, width} = Dimensions.get('window');
 const adUnitId = __DEV__
   ? TestIds.BANNER
-  : 'ca-app-pub-9262239337077945/7084873787'
+  : 'ca-app-pub-9262239337077945/7084873787';
 
 const Section = ({navigation}) => {
-
   const route = useRoute();
   const {section, path, lesson} = route.params;
-  const [imgs,setImgs] = useState([1,2])
+  const [imgs, setImgs] = useState([1, 2]);
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
-    
-     LoadImages(section);
-  },[]);
+    LoadImages(section);
+  }, []);
 
-  const LoadImages = async (section) => {
+  const LoadImages = async section => {
     let reference;
-    
-    if(path=='pure'){
-         reference = storage().ref(`Pure Mathematics/${lesson}/${section}`);
+
+    if (path == 'pure') {
+      reference = storage().ref(`Pure Mathematics/${lesson}/${section}`);
     }
-    else{
-         reference = storage().ref(`Applied Mathematics/${lesson}/${section}`);
+    if (section == 'ප්‍රශ්නපත්‍ර ව්‍යුහය') {
+      reference = storage().ref(`Structure`);
+    } else {
+      reference = storage().ref(`Applied Mathematics/${lesson}/${section}`);
     }
-    
-    
+
     const list = await reference.listAll();
 
-    const imageUrls = await Promise.all(list.items.map(async (itemRef) => {
+    const imageUrls = await Promise.all(
+      list.items.map(async itemRef => {
         const url = await itemRef.getDownloadURL();
-        return { name: itemRef.name, url };
-      }));
+        return {name: itemRef.name, url};
+      }),
+    );
 
-    console.log(imageUrls)
-    setImgs(imageUrls)
-    setLoaded(true)  
+    console.log(imageUrls);
+    setImgs(imageUrls);
+    setLoaded(true);
     return imageUrls;
 
     // try {
@@ -66,33 +75,27 @@ const Section = ({navigation}) => {
       <View style={styles.hview}>
         <Text style={styles.h1}>{section}</Text>
       </View>
-      
+
       {loaded == false && (
         <View style={{justifyContent: 'center', height: height}}>
           <ActivityIndicator size="large" color="#0000ff" />
         </View>
       )}
 
-      {loaded==true && <ScrollView 
-      style={styles.scroll}
-      showsVerticalScrollIndicator={false}
-      
-      >
-      
-      {imgs.map((item)=>
-      <View style={styles.sec} key={item.name}>
-      <Image
-      source={{
-        //require('../../../../assets/images/1.png')
-        uri: item.url,
-      }}
-      style={styles.img}
-      
-      />
-      </View>
+      {loaded == true && (
+        <ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
+          {imgs.map(item => (
+            <View style={styles.sec} key={item.name}>
+              <Image
+                source={{
+                  uri: item.url,
+                }}
+                style={styles.img}
+              />
+            </View>
+          ))}
+        </ScrollView>
       )}
-        
-      </ScrollView>}
 
       <View style={styles.banner}>
         <GAMBannerAd
@@ -103,7 +106,6 @@ const Section = ({navigation}) => {
           }}
         />
       </View>
-      
     </View>
   );
 };
@@ -114,16 +116,16 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
-    paddingBottom:50
+    paddingBottom: 50,
   },
   hview: {
     height: 60,
     zIndex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent:'center',
-    width:"100%",
-    backgroundColor:'#42b72a'
+    justifyContent: 'center',
+    width: '100%',
+    backgroundColor: '#42b72a',
   },
   h1: {
     fontFamily: 'Roboto-Black',
@@ -137,11 +139,10 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     backgroundColor: '#fcfcfa',
     paddingTop: 5,
-    
   },
-  img : {
+  img: {
     width: '100%',
-    aspectRatio: 16/9,
+    aspectRatio: 16 / 9,
   },
   sec: {
     marginVertical: 2,

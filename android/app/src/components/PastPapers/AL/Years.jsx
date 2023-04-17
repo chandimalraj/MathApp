@@ -62,22 +62,7 @@ const Years = ({navigation}) => {
 
   return (
    <View style={styles.container}>
-    <View style={styles.navbar}>
-        <View style={styles.buttonsContainer}>
-          <TouchableOpacity onPress={()=>{
-            navigation.navigate('Home')
-          }}>
-            <Image
-              source={require('../../../assets/icons/Home.png')}
-              style={{width: 40, height: 40}}
-            />
-          </TouchableOpacity>
-        </View>
-        <Image
-          source={require('../../../assets/icons/Cube.png')}
-          style={{width: 50, height: 50}}
-        />
-      </View>
+    
       {loaded == false && (
         <View style={{justifyContent: 'center', height: height}}>
           <ActivityIndicator size="large" color="#0000ff" />

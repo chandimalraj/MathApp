@@ -75,7 +75,7 @@ export default function ComMath({navigation}) {
       >
 
 <TouchableOpacity style={styles.card}
-        onPress={() => navigation.navigate('PureMaths')}
+        onPress={() => navigation.navigate('Section', {section: "ප්‍රශ්නපත්‍ර ව්‍යුහය" , path:"path" , lesson:"lesson"})}
         >
           <Image
             source={
