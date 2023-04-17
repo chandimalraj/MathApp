@@ -46,6 +46,8 @@ const Home = ({navigation}) => {
   const [isSignedIn, setIsSignedIn] = useState(false);
   const [first,setFirst] = useState(false)
 
+  const[userInfo,setUserInfo] = useState({})
+
   useEffect(() => {
     if (!first) {
       findUser();
@@ -126,6 +128,7 @@ const Home = ({navigation}) => {
       if (isSignedIn) {
         setIsSignedIn(true);
         const userInfo = await GoogleSignin.signInSilently();
+        setUserInfo(userInfo)
         setUser({username: userInfo.user.name, imgUrl: userInfo.user.photo});
         console.log(userInfo);
       }
@@ -235,7 +238,12 @@ const Home = ({navigation}) => {
         <TouchableOpacity
           style={styles.card}
           onPress={() => {
-            navigation.navigate('PaperClass');
+            if(isSignedIn){
+              navigation.navigate('Paper',{userInfo:userInfo});
+            }else{
+              navigation.navigate('PaperClass');
+            }
+            
           }}>
           <Image
             source={require('../../assets/icons/Document.png')}

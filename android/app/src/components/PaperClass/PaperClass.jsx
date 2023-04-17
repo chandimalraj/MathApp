@@ -41,6 +41,7 @@ const PaperClass = ({navigation}) => {
       if (isSignedIn) {
         const userInfo = await GoogleSignin.signInSilently();
         console.log(userInfo);
+        navigation.navigate('Paper',{userInfo:userInfo})
       }
     } catch (error) {
       console.log(error);
@@ -84,10 +85,10 @@ const PaperClass = ({navigation}) => {
         const googleCredential = auth.GoogleAuthProvider.credential(idToken);
         console.log(googleCredential);
         //console.log(auth().signInWithCredential(googleCredential));
-  
+        
         // Sign-in the user with the credential
         await auth().signInWithCredential(googleCredential);
-
+        findUser()
       }
      
       //   await GoogleSignin.revokeAccess();

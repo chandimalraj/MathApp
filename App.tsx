@@ -28,6 +28,7 @@ import Years from './android/app/src/components/PastPapers/AL/Years';
 import AlPaper from './android/app/src/components/PastPapers/Paper/AlPaper';
 import PaperView from './android/app/src/components/PastPapers/PaperView/PaperView';
 import LoginRegister from './android/app/src/components/LoginRegister/LoginReg';
+import Paper from './android/app/src/components/PaperClass/Paper/Paper';
 // import RNFetchBlob from 'react-native-fetch-blob';
 // import { Platform } from 'react-native';
 
@@ -163,6 +164,12 @@ const App = () => {
         <Stack.Screen
           name="LoginRegister"
           component={LoginRegister}
+          options={{headerShown: false}}
+        />
+
+        <Stack.Screen
+          name="Paper"
+          component={Paper}
           options={{headerShown: false}}
         />
       </Stack.Navigator>
