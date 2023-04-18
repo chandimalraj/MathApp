@@ -72,6 +72,7 @@ export default function Login({navigation}) {
   }
 
   const Login = async () => {
+
     if (useremail == '' || userpassword == '') {
       setIsErrorModalVisible(true);
       return;
@@ -82,11 +83,11 @@ export default function Login({navigation}) {
         userpassword,
       );
       if (userCredential.user.emailVerified) {
-        navigation.navigate('ComMath');
+        navigation.navigate('Home');
       } else {
         setIsActiveModalVisible(true);
       }
-      console.log(userCredential.user.emailVerified);
+      console.log(userCredential);
     } catch (error) {
       console.log(error);
       setIsErrorModalVisible(true);

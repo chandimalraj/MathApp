@@ -8,7 +8,7 @@ import {
   Keyboard,
   Dimensions,
   TouchableOpacity,
-  Image
+  Image,
 } from 'react-native';
 import React, {useState} from 'react';
 import {
@@ -157,18 +157,22 @@ export default function Register({navigation}) {
       const userCredential = await auth().createUserWithEmailAndPassword(
         useremail,
         userpassword,
-      );
+      )
+      await userCredential.user.updateProfile({
+        displayName: username,
+      });
+
 
       // Send verification email
       await userCredential.user.sendEmailVerification();
       setIsRegModalVisible(true);
       // Do something with the user data (e.g. save to Firebase database)
     } catch (error) {
-        if (error.code === 'auth/invalid-email') {
-          setMsg('ඊමේල් ගිණුම වලන්ගු නොවේ');
-          setIsMsgModalVisible(true);
+      if (error.code === 'auth/invalid-email') {
+        setMsg('ඊමේල් ගිණුම වලන්ගු නොවේ');
+        setIsMsgModalVisible(true);
       }
-      //console.error(error);
+      
     }
   };
 
@@ -187,9 +191,6 @@ export default function Register({navigation}) {
             onBlur={handleBlur}
             maxLength={20}
           />
-          {/* <View style={{width: width * 0.9}}>
-            <Text style={styles.error}>{errors.error1}</Text>
-          </View> */}
 
           <TextInput
             style={[styles.card, isFocused1 && styles.in2]}
@@ -198,9 +199,7 @@ export default function Register({navigation}) {
             onBlur={handleBlur1}
             onChangeText={text => setUserEmail(text)}
           />
-          {/* <View style={{width: width * 0.9}}>
-            <Text style={styles.error}>{errors.error2}</Text>
-          </View> */}
+          
           <TextInput
             style={[styles.card, isFocused2 && styles.in2]}
             placeholder="password"
@@ -210,9 +209,7 @@ export default function Register({navigation}) {
             onChangeText={text => setUserPassword(text)}
             maxLength={10}
           />
-          {/* <View style={{width: width * 0.9}}>
-            <Text style={styles.error}>{errors.error3}</Text>
-          </View> */}
+          
           <TextInput
             style={[styles.card, isFocused3 && styles.in2]}
             placeholder="confirm password"
@@ -225,40 +222,21 @@ export default function Register({navigation}) {
           <View style={{width: width * 0.9}}>
             <Text style={styles.error}>{errors.error4}</Text>
           </View>
-          {/* <TextInput
-          style={[styles.in, isFocused4 && styles.in2]}
-          placeholder="password"
-          secureTextEntry={true}
-          onFocus={handleFocus4}
-          onBlur={handleBlur4}
-        /> */}
 
-<TouchableOpacity
-          style={styles.cardRegister}
-          onPress={() => {
-            setIsFocused(false);
-            setIsFocused1(false);
-            registerUser();
-          }}>
-          <Image
-            source={require('../../assets/icons/Male.png')}
-            style={{width: 25, height: 25}}
-          />
-          
-          <Text style={styles.item}>Register</Text>
-        
-        </TouchableOpacity>
-          {/* <View style={{width: width * 0.9}}>
-            <Button
-              title="තහවුරු කරන්න"
-              color="#42b72a"
-              onPress={() => {
-                setIsFocused(false);
-                setIsFocused1(false);
-                registerUser();
-              }}
+          <TouchableOpacity
+            style={styles.cardRegister}
+            onPress={() => {
+              setIsFocused(false);
+              setIsFocused1(false);
+              registerUser();
+            }}>
+            <Image
+              source={require('../../assets/icons/Male.png')}
+              style={{width: 25, height: 25}}
             />
-          </View> */}
+
+            <Text style={styles.item}>Register</Text>
+          </TouchableOpacity>
           <Modal
             isVisible={isMsgModalVisible}
             onBackdropPress={() => setIsMsgModalVisible(false)}>
@@ -335,7 +313,6 @@ const styles = StyleSheet.create({
     width: width * 0.9,
     color: '#1877f2',
     height: 60,
-    // marginBottom: 10,
     fontSize: 15,
     paddingHorizontal: 15,
     borderRadius: 3,
@@ -353,11 +330,8 @@ const styles = StyleSheet.create({
   },
   error: {
     color: '#fa0202',
-    // backgroundColor:"#42b72a"
   },
   modalContainer: {
-    //width:200,
-    //height:200,
     backgroundColor: '#faf8f7',
     padding: 5,
     alignItems: 'center',
@@ -365,7 +339,6 @@ const styles = StyleSheet.create({
   modalTitle: {
     textAlign: 'center',
     fontWeight: '600',
-    //color:''
   },
   modalMessage: {
     textAlign: 'center',
@@ -384,7 +357,7 @@ const styles = StyleSheet.create({
   card: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent:'center',
+    justifyContent: 'center',
     backgroundColor: '#fff',
     borderRadius: 10,
     elevation: 5,
@@ -396,10 +369,10 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     width: width * 0.9,
   },
-  cardRegister:{
+  cardRegister: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent:'center',
+    justifyContent: 'center',
     backgroundColor: '#42b72a',
     borderRadius: 10,
     elevation: 5,
@@ -414,9 +387,9 @@ const styles = StyleSheet.create({
   item: {
     marginLeft: 20,
     fontWeight: 800,
-    alignItems:'center',
-    color:'#fff',
-    fontSize:15
+    alignItems: 'center',
+    color: '#fff',
+    fontSize: 15,
     //color:''
   },
 });

@@ -87,7 +87,7 @@ const LoginRegister = ({navigation}) => {
     
           // Sign-in the user with the credential
           await auth().signInWithCredential(googleCredential);
-  
+          navigation.navigate('Home')
         }
        
         //   await GoogleSignin.revokeAccess();

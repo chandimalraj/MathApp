@@ -5,7 +5,18 @@
  * @format
  */
 
-import React from 'react';
+import React, {useEffect, useState} from 'react';
+import {
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+  Animated,
+  Image,
+  ScrollView,
+  Dimensions,
+  ActivityIndicator,
+} from 'react-native';
 import Login from './android/app/src/components/Login/Login';
 import Register from './android/app/src/components/Register/Register';
 import {NavigationContainer} from '@react-navigation/native';
@@ -29,152 +40,170 @@ import AlPaper from './android/app/src/components/PastPapers/Paper/AlPaper';
 import PaperView from './android/app/src/components/PastPapers/PaperView/PaperView';
 import LoginRegister from './android/app/src/components/LoginRegister/LoginReg';
 import Paper from './android/app/src/components/PaperClass/Paper/Paper';
-// import RNFetchBlob from 'react-native-fetch-blob';
-// import { Platform } from 'react-native';
+import NetInfo from '@react-native-community/netinfo';
 
-// // Configure trust management for Android and iOS
-// if (Platform.OS === 'android') {
-//   RNFetchBlob.config({
-//     trusty: true
-//   });
-// } else if (Platform.OS === 'ios') {
-//   RNFetchBlob.config({
-//     fileCache: true,
-//     appendExt: 'png',
-//     trusty: true
-//   });
-// }
 
 const Stack = createNativeStackNavigator();
 
+const {height, width} = Dimensions.get('window');
 const App = () => {
-  return (
-    //<Login></Login>
-    //<Register></Register>
-    <NavigationContainer>
-      <Stack.Navigator>
-        {/* <Stack.Screen
+  const [isConnected, setIsConnected] = useState(false);
+  const [intervalId, setIntervalId] = useState(0)
+
+  useEffect(() => {
+  const id =  setInterval(()=>{
+      NetInfo.fetch().then(state => {
+        //
+        console.log(state.isConnected+"asdasds");
+        if (state.isConnected == true) {
+          setIsConnected(true);
+          clearInterval(id)
+        }
+  
+  
+      });
+    },1000)
+
+   
+    
+  }, []);
+
+  
+  if (isConnected) {
+    return (
+      //<Login></Login>
+      //<Register></Register>
+      <NavigationContainer>
+        <Stack.Navigator>
+          {/* <Stack.Screen
           name="Entry"
           component={Entry}
           options={{headerShown: false}}
         /> */}
-        <Stack.Screen
-          name="Home"
-          component={Home}
-          options={{headerShown: false}}
-        />
-        <Stack.Screen
-          name="ComMath"
-          component={ComMath}
-          options={{headerShown: false}}
-        />
-        <Stack.Screen
-          name="Login"
-          component={Login}
-          options={{headerShown: false}}
-        />
-        <Stack.Screen
-          name="PureMaths"
-          component={PureLessons}
-          options={{headerShown: false}}
-        />
-        <Stack.Screen
-          name="Register"
-          component={Register}
-          options={{title: 'Register'}}
-        />
+          <Stack.Screen
+            name="Home"
+            component={Home}
+            options={{headerShown: false}}
+          />
+          <Stack.Screen
+            name="ComMath"
+            component={ComMath}
+            options={{headerShown: false}}
+          />
+          <Stack.Screen
+            name="Login"
+            component={Login}
+            options={{headerShown: false}}
+          />
+          <Stack.Screen
+            name="PureMaths"
+            component={PureLessons}
+            options={{headerShown: false}}
+          />
+          <Stack.Screen
+            name="Register"
+            component={Register}
+            options={{title: 'Register'}}
+          />
 
-        <Stack.Screen
-          name="AppliedMaths"
-          component={AppliedLessons}
-          options={{headerShown: false}}
-        />
-        <Stack.Screen
-          name="Lesson"
-          component={Lesson}
-          options={{headerShown: false}}
-        />
+          <Stack.Screen
+            name="AppliedMaths"
+            component={AppliedLessons}
+            options={{headerShown: false}}
+          />
+          <Stack.Screen
+            name="Lesson"
+            component={Lesson}
+            options={{headerShown: false}}
+          />
 
-        <Stack.Screen
-          name="Qcontainer"
-          component={QuestionContainer}
-          options={{headerShown: false}}
-        />
+          <Stack.Screen
+            name="Qcontainer"
+            component={QuestionContainer}
+            options={{headerShown: false}}
+          />
 
-        <Stack.Screen
-          name="DailyQ"
-          component={DailyQuestions}
-          options={{headerShown: false}}
-        />
-        <Stack.Screen
-          name="Section"
-          component={Section}
-          options={{headerShown: false}}
-        />
-        <Stack.Screen
-          name="PastPapers"
-          component={PastPapers}
-          options={{headerShown: false}}
-        />
-        <Stack.Screen
-          name="Syllabus"
-          component={Syllabus}
-          options={{headerShown: false}}
-        />
-        <Stack.Screen
-          name="Tution"
-          component={TutionClasses}
-          options={{headerShown: false}}
-        />
-        <Stack.Screen
-          name="PaperClass"
-          component={PaperClass}
-          options={{headerShown: false}}
-        />
+          <Stack.Screen
+            name="DailyQ"
+            component={DailyQuestions}
+            options={{headerShown: false}}
+          />
+          <Stack.Screen
+            name="Section"
+            component={Section}
+            options={{headerShown: false}}
+          />
+          <Stack.Screen
+            name="PastPapers"
+            component={PastPapers}
+            options={{headerShown: false}}
+          />
+          <Stack.Screen
+            name="Syllabus"
+            component={Syllabus}
+            options={{headerShown: false}}
+          />
+          <Stack.Screen
+            name="Tution"
+            component={TutionClasses}
+            options={{headerShown: false}}
+          />
+          <Stack.Screen
+            name="PaperClass"
+            component={PaperClass}
+            options={{headerShown: false}}
+          />
 
-        <Stack.Screen
-          name="Discussion"
-          component={Discussion}
-          options={{headerShown: false}}
-        />
+          <Stack.Screen
+            name="Discussion"
+            component={Discussion}
+            options={{headerShown: false}}
+          />
 
-        <Stack.Screen
-          name="ALpastpapers"
-          component={AlPastpapers}
-          options={{headerShown: false}}
-        />
+          <Stack.Screen
+            name="ALpastpapers"
+            component={AlPastpapers}
+            options={{headerShown: false}}
+          />
 
-        <Stack.Screen
-          name="Years"
-          component={Years}
-          options={{headerShown: false}}
-        />
+          <Stack.Screen
+            name="Years"
+            component={Years}
+            options={{headerShown: false}}
+          />
 
-        <Stack.Screen
-          name="AlPaper"
-          component={AlPaper}
-          options={{headerShown: false}}
-        />
-        <Stack.Screen
-          name="PaperView"
-          component={PaperView}
-          options={{headerShown: false}}
-        />
+          <Stack.Screen
+            name="AlPaper"
+            component={AlPaper}
+            options={{headerShown: false}}
+          />
+          <Stack.Screen
+            name="PaperView"
+            component={PaperView}
+            options={{headerShown: false}}
+          />
 
-        <Stack.Screen
-          name="LoginRegister"
-          component={LoginRegister}
-          options={{headerShown: false}}
-        />
+          <Stack.Screen
+            name="LoginRegister"
+            component={LoginRegister}
+            options={{headerShown: false}}
+          />
 
-        <Stack.Screen
-          name="Paper"
-          component={Paper}
-          options={{headerShown: false}}
-        />
-      </Stack.Navigator>
-    </NavigationContainer>
-  );
+          <Stack.Screen
+            name="Paper"
+            component={Paper}
+            options={{headerShown: false}}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
+    );
+  } else {
+    return (
+      <View style={{justifyContent: 'center', height: height}}>
+          <ActivityIndicator size="large" color="#0000ff" />
+        </View>
+    );
+  }
 };
 
 export default App;

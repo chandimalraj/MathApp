@@ -18,7 +18,6 @@ import Sidebar from './Sidebar/Sidebar';
 import storage from '@react-native-firebase/storage';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import auth from '@react-native-firebase/auth';
-// import Carousel from './Carousel/Carousel';
 
 const adUnitId = __DEV__
   ? TestIds.BANNER
@@ -44,14 +43,14 @@ const Home = ({navigation}) => {
     imgUrl: 'https://i.ibb.co/M9TV5b4/User.png',
   });
   const [isSignedIn, setIsSignedIn] = useState(false);
-  const [first,setFirst] = useState(false)
+  const [first, setFirst] = useState(false);
 
-  const[userInfo,setUserInfo] = useState({})
+  const [userInfo, setUserInfo] = useState({});
 
   useEffect(() => {
     if (!first) {
       findUser();
-      setFirst(true)
+      setFirst(true);
     }
 
     if (imges.length == 0) {
@@ -108,10 +107,10 @@ const Home = ({navigation}) => {
   };
 
   const toggleMenu = () => {
-    if(!isSignedIn){
-      findUser()
+    if (!isSignedIn) {
+      findUser();
     }
-    
+
     setIsMenuOpen(!isMenuOpen);
     Animated.timing(menuAnimation, {
       toValue: isMenuOpen ? -250 : 0,
@@ -121,16 +120,33 @@ const Home = ({navigation}) => {
   };
 
   const findUser = async () => {
-
+    
     try {
       const isSignedIn = await GoogleSignin.isSignedIn();
       console.log(isSignedIn);
       if (isSignedIn) {
         setIsSignedIn(true);
         const userInfo = await GoogleSignin.signInSilently();
-        setUserInfo(userInfo)
+        setUserInfo(userInfo);
         setUser({username: userInfo.user.name, imgUrl: userInfo.user.photo});
         console.log(userInfo);
+      } else {
+
+        const unsubscribe = auth().onAuthStateChanged(user => {
+          if (user) {
+            setIsSignedIn(true);
+            console.log(user);
+            let img;
+            if (user.photoURL == null) {
+              img = 'https://i.ibb.co/M9TV5b4/User.png';
+            } else {
+              img = user.photoURL;
+            }
+            setUser({username: user.displayName, imgUrl: img});
+          } else {
+            setIsSignedIn(false);
+          }
+        });
       }
     } catch (error) {
       console.log(error);
@@ -138,20 +154,32 @@ const Home = ({navigation}) => {
   };
 
   const logOutUser = async () => {
+
+
     try {
+      const isSignedIn = await GoogleSignin.isSignedIn();
+
       if (isSignedIn) {
         await GoogleSignin.revokeAccess();
         await GoogleSignin.signOut();
         await auth().signOut();
-        setIsSignedIn(false)
+        setIsSignedIn(false);
         setUser({
-          username:"user",
-          imgUrl:'https://i.ibb.co/M9TV5b4/User.png'
-        })
+          username: 'user',
+          imgUrl: 'https://i.ibb.co/M9TV5b4/User.png',
+        });
+      } else {
+        await auth().signOut();
+        setUser({
+          username: 'user',
+          imgUrl: 'https://i.ibb.co/M9TV5b4/User.png',
+        });
       }
     } catch (error) {
       console.log(error);
     }
+
+
   };
 
   return (
@@ -192,8 +220,6 @@ const Home = ({navigation}) => {
           ))}
         </ScrollView>
       </View>
-
-      {/* <Carousel/> */}
 
       <ScrollView
         style={styles.container}
@@ -238,12 +264,11 @@ const Home = ({navigation}) => {
         <TouchableOpacity
           style={styles.card}
           onPress={() => {
-            if(isSignedIn){
-              navigation.navigate('Paper',{userInfo:userInfo});
-            }else{
+            if (isSignedIn) {
+              navigation.navigate('Paper', {userInfo: userInfo});
+            } else {
               navigation.navigate('PaperClass');
             }
-            
           }}>
           <Image
             source={require('../../assets/icons/Document.png')}
@@ -340,12 +365,10 @@ const Home = ({navigation}) => {
       <Animated.View style={[styles.menuContainer, {left: menuAnimation}]}>
         <View style={styles.sidebarHeaderContainer}>
           <Image
-            source={
-              {
-                uri: user.imgUrl,
-              }
-            }
-            style={{width: 80, height: 80,borderRadius:40}}
+            source={{
+              uri: user.imgUrl,
+            }}
+            style={{width: 80, height: 80, borderRadius: 40}}
           />
           <Text style={styles.sidebarHeader}>{user.username}</Text>
         </View>
@@ -390,29 +413,31 @@ const Home = ({navigation}) => {
           <Text style={styles.sidebarItem}>Conatct Us</Text>
         </TouchableOpacity>
 
-        {isSignedIn==true && (<TouchableOpacity
-          style={styles.sidebarItemContainer}
-          onPress={logOutUser}>
-          <Image
-            source={require('../../assets/icons/Left.png')}
-            style={{width: 30, height: 30}}
-          />
-          <Text style={styles.sidebarItem}>Log Out</Text>
-        </TouchableOpacity>)}
+        {isSignedIn == true && (
+          <TouchableOpacity
+            style={styles.sidebarItemContainer}
+            onPress={logOutUser}>
+            <Image
+              source={require('../../assets/icons/Left.png')}
+              style={{width: 30, height: 30}}
+            />
+            <Text style={styles.sidebarItem}>Log Out</Text>
+          </TouchableOpacity>
+        )}
 
-        {isSignedIn==false && (<TouchableOpacity
-          style={styles.sidebarItemContainer}
-          onPress={()=>{
-            navigation.navigate('LoginRegister')
-          }}>
-          <Image
-            source={require('../../assets/icons/Right.png')}
-            style={{width: 30, height: 30}}
-          />
-          <Text style={styles.sidebarItem}>Log In</Text>
-        </TouchableOpacity>)}
-
-
+        {isSignedIn == false && (
+          <TouchableOpacity
+            style={styles.sidebarItemContainer}
+            onPress={() => {
+              navigation.navigate('LoginRegister');
+            }}>
+            <Image
+              source={require('../../assets/icons/Right.png')}
+              style={{width: 30, height: 30}}
+            />
+            <Text style={styles.sidebarItem}>Log In</Text>
+          </TouchableOpacity>
+        )}
       </Animated.View>
     </View>
   );
@@ -459,13 +484,12 @@ const styles = StyleSheet.create({
     width: 250,
     height: height,
     backgroundColor: '#fff',
-    //padding: 10,
     shadowColor: '#000',
     shadowOpacity: 0.2,
     shadowOffset: {width: 2, height: 0},
     shadowRadius: 2,
     elevation: 3,
-    //zIndex: 1,
+    
   },
   menuOption: {
     fontSize: 18,
@@ -501,7 +525,6 @@ const styles = StyleSheet.create({
     shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
-    //padding: 10,
     marginBottom: 12,
     width: width * 0.9,
   },
