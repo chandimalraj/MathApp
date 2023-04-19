@@ -108,7 +108,7 @@ export default function ComMath({navigation}) {
         <Text style={styles.pure}>{pure}</Text>
 
         <TouchableOpacity style={styles.card}
-       onPress={() => navigation.navigate('AppliedMaths')}
+         onPress={() => navigation.navigate('AppliedMaths')}
         >
           <Image
             source={
