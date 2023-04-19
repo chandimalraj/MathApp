@@ -39,7 +39,8 @@ const Paper = ({navigation}) => {
 
   //user start the paper
   const start = () => {
-
+    console.log(paperDetails.duration)
+    x = paperDetails.duration*60*60;
     const dateObj = new Date();
     const year = dateObj.getFullYear();
     const month = dateObj.getMonth() + 1;
@@ -161,6 +162,7 @@ const Paper = ({navigation}) => {
     }
     if(savedData !==null){
 
+      //eka phone ekakin eka parak paper eka krnn puluwan wena widiht 
       if (savedData.user.name == userEmail) {
 
         const reference = firebase
@@ -227,7 +229,7 @@ const Paper = ({navigation}) => {
 
 
     }else{
-       
+       console.log("awa")
       const reference = firebase
           .app()
           .database(
@@ -244,6 +246,7 @@ const Paper = ({navigation}) => {
           .once('value', snapshot => {
             setPaperDetails(snapshot.val());
             setDuration(snapshot.val().duration);
+            console.log(snapshot.val().duration)
             }
           )
           .then(r => {
