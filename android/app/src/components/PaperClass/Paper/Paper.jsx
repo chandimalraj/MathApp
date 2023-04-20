@@ -34,22 +34,24 @@ const Paper = ({navigation}) => {
 
   useEffect(() => {
     // console.log(userInfo.user.email);
-     retrieveDataInApp();
+    retrieveDataInApp();
   }, []);
 
   //user start the paper
   const start = () => {
-    console.log(paperDetails.duration)
-    x = paperDetails.duration*60*60;
+    console.log(paperDetails.duration);
+    x = paperDetails.duration * 60 * 60;
     const dateObj = new Date();
     const year = dateObj.getFullYear();
     const month = dateObj.getMonth() + 1;
     const date = dateObj.getDate();
     const hour = dateObj.getHours();
     const minutes = dateObj.getMinutes();
+    const seconds = dateObj.getSeconds();
+     // Convert the Date object to a string in ISO 8601 format
+     const dateString = dateObj.toISOString();
 
     if (paperDetails !== null) {
-
       const reference = firebase
         .app()
         .database(
@@ -58,13 +60,7 @@ const Paper = ({navigation}) => {
         .ref(`users/${userEmail}/`)
         .set({
           name: userInfo.user.name,
-          start_at: {
-            year: year,
-            month: month,
-            date: date,
-            hour: hour,
-            minutes: minutes,
-          },
+          start_at: dateString,
           paper: paperDetails,
         })
         .then(() => console.log('Data set.'))
@@ -86,9 +82,7 @@ const Paper = ({navigation}) => {
     }
   };
 
-
-  const resume = ()=>{
-
+  const resume = () => {
     const intervalId = setInterval(() => {
       x = x - 1;
       setTime(x);
@@ -99,8 +93,7 @@ const Paper = ({navigation}) => {
     }, 1000);
 
     setIntervalId(intervalId);
-
-  }
+  };
 
   //save user paper details in app memory
   const saveDataInApp = async () => {
@@ -111,6 +104,10 @@ const Paper = ({navigation}) => {
     const date = dateObj.getDate();
     const hour = dateObj.getHours();
     const minutes = dateObj.getMinutes();
+    const seconds = dateObj.getSeconds();
+
+    // Convert the Date object to a string in ISO 8601 format
+     const dateString = dateObj.toISOString();
 
     const user = {
       user: {
@@ -122,13 +119,7 @@ const Paper = ({navigation}) => {
         //   hour: hour,
         //   minutes: minutes,
         // },
-        leave_at: {
-          year: year,
-          month: month,
-          date: date,
-          hour: hour,
-          minutes: minutes,
-        },
+        leave_at: dateString,
         paper: paperDetails,
       },
     };
@@ -147,41 +138,36 @@ const Paper = ({navigation}) => {
 
   //data retrive from app memory and retrieve paper details from database
   const retrieveDataInApp = async () => {
-
     let savedData;
 
     try {
       const value = await AsyncStorage.getItem('myData');
       const data = JSON.parse(value);
-      console.log(data)
+      console.log(data);
       savedData = data;
       //console.log(data.userEmail.paper.duration);
       // setSaveData();
     } catch (error) {
       console.log(error);
     }
-    if(savedData !==null){
-
-      //eka phone ekakin eka parak paper eka krnn puluwan wena widiht 
+    if (savedData !== null) {
+      //eka phone ekakin eka parak paper eka krnn puluwan wena widiht
       if (savedData.user.name == userEmail) {
-
         const reference = firebase
           .app()
           .database(
             'https://math-app-1a402-default-rtdb.asia-southeast1.firebasedatabase.app/',
           )
           .ref(`paperclass/paper01/`);
-          
-          // console.log("savedData.user.name")
-          // console.log(savedData.user.name)
-  
-  
-  
+
+        // console.log("savedData.user.name")
+        // console.log(savedData.user.name)
+
         reference
           .once('value', snapshot => {
             setPaperDetails(snapshot.val());
             // console.log(snapshot.val());
-  
+
             //check saved data about user in app memory
             if (savedData !== null) {
               //setDuration();
@@ -191,7 +177,7 @@ const Paper = ({navigation}) => {
               //check last time that user leave the page
               //console.log(savedData.user.leave_at);
               const userLeaveTime = savedData.user.leave_at;
-  
+
               //check start time of the paper
               const reference2 = firebase
                 .app()
@@ -199,20 +185,31 @@ const Paper = ({navigation}) => {
                   'https://math-app-1a402-default-rtdb.asia-southeast1.firebasedatabase.app/',
                 )
                 .ref(`users/${userEmail}/`);
-  
+
               reference2.once('value', snapshot => {
                 const paperStartTime = snapshot.val().start_at;
                 const paperDuration = snapshot.val();
-                // console.log(paperStartTime);
-                const presentTime = new Date()
+            
+                const presentTime = new Date();
+              
+                // Convert the date string to a Date object
+                const startDate = new Date(paperStartTime);
                 
-                 const ituru = 1*60-(presentTime.getMinutes()-paperStartTime.minutes)
-                // const leftTime = userLeaveTime.minutes - paperStartTime.minutes;
-                 console.log(paperDuration)
+           
+
+                // Calculate the time difference in milliseconds
+                const timeDiff = Math.abs(presentTime.getTime() - startDate.getTime() );
+
+                // Convert milliseconds to seconds
+                const timeDiffInSeconds = Math.floor(timeDiff / 1000);
+
+                const ituru = 1 * 60 * 60 - timeDiffInSeconds;
+
+                console.log(paperDuration);
                 // setDuration(leftTime);
-                  x=ituru*60;
+                x = ituru ;
               });
-  
+
               //find time duration left if
             }
             // setDuration(snapshot.val().duration);
@@ -220,42 +217,32 @@ const Paper = ({navigation}) => {
           .then(r => {
             // setLoaded(true);
           });
-  
-          resume();
-      }else{
-  
+
+        resume();
+      } else {
       }
-
-
-
-    }else{
-       console.log("awa")
+    } else {
+      console.log('awa');
       const reference = firebase
-          .app()
-          .database(
-            'https://math-app-1a402-default-rtdb.asia-southeast1.firebasedatabase.app/',
-          )
-          .ref(`paperclass/paper01/`);
-          
-          // console.log("savedData.user.name")
-          // console.log(savedData.user.name)
-  
-  
-  
-        reference
-          .once('value', snapshot => {
-            setPaperDetails(snapshot.val());
-            setDuration(snapshot.val().duration);
-            console.log(snapshot.val().duration)
-            }
-          )
-          .then(r => {
-            // setLoaded(true);
-          });
+        .app()
+        .database(
+          'https://math-app-1a402-default-rtdb.asia-southeast1.firebasedatabase.app/',
+        )
+        .ref(`paperclass/paper01/`);
 
+      // console.log("savedData.user.name")
+      // console.log(savedData.user.name)
 
+      reference
+        .once('value', snapshot => {
+          setPaperDetails(snapshot.val());
+          setDuration(snapshot.val().duration);
+          console.log(snapshot.val().duration);
+        })
+        .then(r => {
+          // setLoaded(true);
+        });
     }
-    
   };
 
   const stop = () => {
@@ -280,10 +267,7 @@ const Paper = ({navigation}) => {
           onPress={() => {
             start();
           }}>
-          {/* <Image
-            source={require('../../../assets/icons/User.png')}
-            style={{width: 50, height: 50}}
-          /> */}
+          
           <Text style={styles.item}>Start Paper</Text>
         </TouchableOpacity>
 
@@ -296,30 +280,21 @@ const Paper = ({navigation}) => {
           onPress={() => {
             stop();
           }}>
-          {/* <Image
-            source={require('../../../assets/icons/User.png')}
-            style={{width: 50, height: 50}}
-          /> */}
+          
           <Text style={styles.item}>Submit Paper</Text>
         </TouchableOpacity>
-
 
         <TouchableOpacity
           style={styles.startcard}
           onPress={async () => {
-             
-              try {
-                await AsyncStorage.removeItem('myData');
-                console.log(`Successfully removed item with key "`);
-              } catch (error) {
-                console.log(`Error removing item with key "`);
-              }
-            
+            try {
+              await AsyncStorage.removeItem('myData');
+              console.log(`Successfully removed item with key "`);
+            } catch (error) {
+              console.log(`Error removing item with key "`);
+            }
           }}>
-          {/* <Image
-            source={require('../../../assets/icons/User.png')}
-            style={{width: 50, height: 50}}
-          /> */}
+          
           <Text style={styles.item}>Submit Paper</Text>
         </TouchableOpacity>
       </ScrollView>
